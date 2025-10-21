@@ -100,7 +100,7 @@ function New-WorkstationConfiguration {
             
             # Computer name configuration
             # This resource ensures the computer name matches the desired value
-            Computer ComputerName {
+            ComputerName ComputerName {
                 Name = $ConfigData.ComputerName
                 Ensure = "Present"
             }
