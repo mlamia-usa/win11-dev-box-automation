@@ -29,7 +29,7 @@
 
 [CmdletBinding()]
 param(
-    [string]$GitHubRepo = "https://raw.githubusercontent.com/YOUR_USERNAME/win11-dev-box-automation/main",
+    [string]$GitHubRepo = "https://raw.githubusercontent.com/mlamia-usa/win11-dev-box-automation/main",
     [string]$ConfigPath = "C:\Temp\WorkstationConfig"
 )
 
