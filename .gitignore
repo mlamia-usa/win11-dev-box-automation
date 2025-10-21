@@ -1,0 +1,163 @@
+# PowerShell
+*.ps1xml
+*.psc1
+*.psd1
+*.psm1
+*.ps1
+*.ps2
+*.psc2
+*.pssc
+*.psrc
+*.ps1xml
+*.psc1
+*.psd1
+*.psm1
+*.ps1
+*.ps2
+*.psc2
+*.pssc
+*.psrc
+
+# PowerShell DSC
+*.mof
+*.meta.mof
+*.checksum
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# Visual Studio Code
+.vscode/
+*.code-workspace
+
+# Windows PowerShell
+*.ps1xml
+*.psc1
+*.psd1
+*.psm1
+*.ps1
+*.ps2
+*.psc2
+*.pssc
+*.psrc
+
+# PowerShell DSC
+*.mof
+*.meta.mof
+*.checksum
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# Visual Studio Code
+.vscode/
+*.code-workspace
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+temp/
+tmp/
+
+# Backup files
+*.bak
+*.backup
+*.old
+
+# System files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE files
+*.swp
+*.swo
+*~
+
+# PowerShell specific
+*.ps1xml
+*.psc1
+*.psd1
+*.psm1
+*.ps1
+*.ps2
+*.psc2
+*.pssc
+*.psrc
+
+# PowerShell DSC
+*.mof
+*.meta.mof
+*.checksum
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# Visual Studio Code
+.vscode/
+*.code-workspace
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+temp/
+tmp/
+
+# Backup files
+*.bak
+*.backup
+*.old
+
+# System files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE files
+*.swp
+*.swo
+*~
+
