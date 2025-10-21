@@ -166,7 +166,7 @@ function Compile-Configuration {
     try {
         # Compile the configuration
         # This creates a MOF file in the current directory
-        $Configuration -ConfigurationData $ConfigurationData
+        & $Configuration -ConfigurationData $ConfigurationData
         
         # Verify MOF file was created
         $MofFile = "localhost.mof"
