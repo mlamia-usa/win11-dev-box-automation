@@ -93,16 +93,26 @@ function New-WorkstationConfiguration {
         )
         
         # Import required DSC resources
-        Import-DscResource -ModuleName PSDesiredStateConfiguration
+        # Note: Import-DscResource is only available within DSC configuration blocks
+        # and is used to import specific DSC resources, not modules
         
         # Node configuration - targets the local machine
         Node localhost {
             
-            # Computer name configuration
-            # This resource ensures the computer name matches the desired value
-            ComputerName ComputerName {
-                Name = $ConfigData.ComputerName
-                Ensure = "Present"
+            # Computer name configuration using Script resource
+            # This ensures the computer name matches the desired value
+            Script ComputerName {
+                GetScript = {
+                    return @{
+                        Result = $env:COMPUTERNAME
+                    }
+                }
+                TestScript = {
+                    return $env:COMPUTERNAME -eq $using:ConfigData.ComputerName
+                }
+                SetScript = {
+                    Rename-Computer -NewName $using:ConfigData.ComputerName -Force
+                }
             }
             
             # TODO: Phase 2 - Additional configurations will be added here
