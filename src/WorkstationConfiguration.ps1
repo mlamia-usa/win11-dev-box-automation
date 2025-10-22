@@ -93,8 +93,7 @@ function New-WorkstationConfiguration {
         )
         
         # Import required DSC resources
-        # Note: Import-DscResource is only available within DSC configuration blocks
-        # and is used to import specific DSC resources, not modules
+        Import-DscResource -ModuleName PSDesiredStateConfiguration
         
         # Node configuration - targets the local machine
         Node localhost {
