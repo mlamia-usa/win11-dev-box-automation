@@ -166,7 +166,7 @@ function Compile-Configuration {
         compiled configuration in a format that DSC can understand and execute.
     #>
     param(
-        [scriptblock]$Configuration,
+        $Configuration,
         [hashtable]$ConfigurationData
     )
     
