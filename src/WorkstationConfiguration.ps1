@@ -176,31 +176,24 @@ function Compile-Configuration {
         # Compile the configuration
         # This creates a MOF file in the current directory
         Write-Host "Calling DSC configuration function..." -ForegroundColor Yellow
-        Write-Output "Calling DSC configuration function..."
         
         try {
             & $Configuration -ConfigurationData $ConfigurationData
             Write-Host "DSC configuration function completed successfully" -ForegroundColor Green
-            Write-Output "DSC configuration function completed successfully"
         }
         catch {
             Write-Host "Error during DSC configuration compilation: $($_.Exception.Message)" -ForegroundColor Red
             Write-Host "Full error: $($_.Exception)" -ForegroundColor Red
-            Write-Output "Error during DSC configuration compilation: $($_.Exception.Message)"
-            Write-Output "Full error: $($_.Exception)"
             throw "DSC configuration compilation failed: $($_.Exception.Message)"
         }
         
         # Check for any MOF files in the current directory and subdirectories
         $MofFiles = Get-ChildItem -Path "." -Filter "*.mof" -Recurse -ErrorAction SilentlyContinue
         Write-Host "Found MOF files: $($MofFiles.Count)" -ForegroundColor Yellow
-        Write-Output "Found MOF files: $($MofFiles.Count)"
         if ($MofFiles.Count -gt 0) {
             Write-Host "MOF files found:" -ForegroundColor Yellow
-            Write-Output "MOF files found:"
             $MofFiles | ForEach-Object { 
                 Write-Host "  - $($_.FullName)" -ForegroundColor Yellow
-                Write-Output "  - $($_.FullName)"
             }
         }
         
@@ -212,7 +205,6 @@ function Compile-Configuration {
             if ($AllMofFiles.Count -gt 0) {
                 $MofFile = $AllMofFiles[0].FullName
                 Write-Host "Using MOF file: $MofFile" -ForegroundColor Yellow
-                Write-Output "Using MOF file: $MofFile"
             } else {
                 throw "MOF file was not created: $MofFile"
             }
@@ -255,12 +247,10 @@ function Apply-Configuration {
         # -Wait: Waits for the configuration to complete
         
         Write-Host "Starting DSC configuration application..." -ForegroundColor Yellow
-        Write-Output "Starting DSC configuration application..."
         
         # Get the directory containing the MOF file
         $MofDirectory = Split-Path -Parent $MofFile
         Write-Host "MOF file directory: $MofDirectory" -ForegroundColor Yellow
-        Write-Output "MOF file directory: $MofDirectory"
         
         Start-DscConfiguration -Path $MofDirectory -Force -Verbose -Wait
         
