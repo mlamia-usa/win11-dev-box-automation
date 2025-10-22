@@ -175,12 +175,37 @@ function Compile-Configuration {
     try {
         # Compile the configuration
         # This creates a MOF file in the current directory
-        & $Configuration -ConfigurationData $ConfigurationData
+        Write-Host "Calling DSC configuration function..." -ForegroundColor Yellow
+        
+        try {
+            & $Configuration -ConfigurationData $ConfigurationData
+            Write-Host "DSC configuration function completed successfully" -ForegroundColor Green
+        }
+        catch {
+            Write-Host "Error during DSC configuration compilation: $($_.Exception.Message)" -ForegroundColor Red
+            Write-Host "Full error: $($_.Exception)" -ForegroundColor Red
+            throw "DSC configuration compilation failed: $($_.Exception.Message)"
+        }
+        
+        # Check for any MOF files in the current directory
+        $MofFiles = Get-ChildItem -Path "." -Filter "*.mof" -ErrorAction SilentlyContinue
+        Write-Host "Found MOF files: $($MofFiles.Count)" -ForegroundColor Yellow
+        if ($MofFiles.Count -gt 0) {
+            Write-Host "MOF files found:" -ForegroundColor Yellow
+            $MofFiles | ForEach-Object { Write-Host "  - $($_.Name)" -ForegroundColor Yellow }
+        }
         
         # Verify MOF file was created
         $MofFile = "localhost.mof"
         if (-not (Test-Path $MofFile)) {
-            throw "MOF file was not created: $MofFile"
+            # Check if there are any MOF files with different names
+            $AllMofFiles = Get-ChildItem -Path "." -Filter "*.mof" -ErrorAction SilentlyContinue
+            if ($AllMofFiles.Count -gt 0) {
+                $MofFile = $AllMofFiles[0].Name
+                Write-Host "Using MOF file: $MofFile" -ForegroundColor Yellow
+            } else {
+                throw "MOF file was not created: $MofFile"
+            }
         }
         
         Write-Host "Configuration compiled successfully: $MofFile" -ForegroundColor Green
