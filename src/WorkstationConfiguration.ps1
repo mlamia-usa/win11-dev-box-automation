@@ -130,9 +130,6 @@ function New-WorkstationConfiguration {
             [hashtable]$ConfigData
         )
         
-        # Store the computer name in a variable for use in Script resources
-        $ComputerName = $ConfigData.ComputerName
-        
         # Import required DSC resources
         Import-DscResource -ModuleName PSDesiredStateConfiguration
         
@@ -148,10 +145,15 @@ function New-WorkstationConfiguration {
                     }
                 }
                 TestScript = {
-                    return $env:COMPUTERNAME -eq $ComputerName
+                    return $env:COMPUTERNAME -eq "$($ConfigData.ComputerName)"
                 }
                 SetScript = {
-                    Rename-Computer -NewName $ComputerName -Force
+                    $NewName = "$($ConfigData.ComputerName)"
+                    Write-Verbose "Attempting to rename computer to: $NewName"
+                    if ([string]::IsNullOrEmpty($NewName)) {
+                        throw "Computer name is null or empty"
+                    }
+                    Rename-Computer -NewName $NewName -Force
                 }
             }
             
