@@ -42,14 +42,26 @@ function Initialize-WinRM {
     Write-Host "Configuring WinRM for DSC operations..." -ForegroundColor Green
     
     try {
+        # Check and fix network profile if needed
+        $NetworkProfiles = Get-NetConnectionProfile
+        foreach ($Profile in $NetworkProfiles) {
+            if ($Profile.NetworkCategory -eq "Public") {
+                Write-Host "Changing network profile from Public to Private for: $($Profile.Name)" -ForegroundColor Yellow
+                Set-NetConnectionProfile -Name $Profile.Name -NetworkCategory Private
+            }
+        }
+        
         # Enable WinRM service
         Set-Service -Name "WinRM" -StartupType Automatic -ErrorAction SilentlyContinue
         Start-Service -Name "WinRM" -ErrorAction SilentlyContinue
         
         # Configure WinRM for local DSC operations
-        winrm quickconfig -q
+        Write-Host "Configuring WinRM..." -ForegroundColor Yellow
+        $WinRMResult = winrm quickconfig -q 2>&1
+        Write-Host "WinRM configuration output: $WinRMResult" -ForegroundColor Yellow
         
         # Enable PowerShell remoting
+        Write-Host "Enabling PowerShell remoting..." -ForegroundColor Yellow
         Enable-PSRemoting -Force -SkipNetworkProfileCheck
         
         Write-Host "WinRM configured successfully" -ForegroundColor Green
@@ -118,6 +130,9 @@ function New-WorkstationConfiguration {
             [hashtable]$ConfigData
         )
         
+        # Store the computer name in a variable for use in Script resources
+        $ComputerName = $ConfigData.ComputerName
+        
         # Import required DSC resources
         Import-DscResource -ModuleName PSDesiredStateConfiguration
         
@@ -133,10 +148,10 @@ function New-WorkstationConfiguration {
                     }
                 }
                 TestScript = {
-                    return $env:COMPUTERNAME -eq $using:ConfigData.ComputerName
+                    return $env:COMPUTERNAME -eq $ComputerName
                 }
                 SetScript = {
-                    Rename-Computer -NewName $using:ConfigData.ComputerName -Force
+                    Rename-Computer -NewName $ComputerName -Force
                 }
             }
             
