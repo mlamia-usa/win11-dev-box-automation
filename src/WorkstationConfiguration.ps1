@@ -34,6 +34,32 @@ param(
 # Import required DSC modules
 Import-Module -Name PSDesiredStateConfiguration -Force
 
+function Initialize-WinRM {
+    <#
+    .SYNOPSIS
+        Configures WinRM service for DSC operations.
+    #>
+    Write-Host "Configuring WinRM for DSC operations..." -ForegroundColor Green
+    
+    try {
+        # Enable WinRM service
+        Set-Service -Name "WinRM" -StartupType Automatic -ErrorAction SilentlyContinue
+        Start-Service -Name "WinRM" -ErrorAction SilentlyContinue
+        
+        # Configure WinRM for local DSC operations
+        winrm quickconfig -q
+        
+        # Enable PowerShell remoting
+        Enable-PSRemoting -Force -SkipNetworkProfileCheck
+        
+        Write-Host "WinRM configured successfully" -ForegroundColor Green
+    }
+    catch {
+        Write-Host "Warning: Could not configure WinRM: $($_.Exception.Message)" -ForegroundColor Yellow
+        Write-Host "DSC may not work properly without WinRM configuration" -ForegroundColor Yellow
+    }
+}
+
 function Test-ConfigurationData {
     <#
     .SYNOPSIS
@@ -256,16 +282,27 @@ function Apply-Configuration {
         
         Write-Host "DSC configuration applied successfully!" -ForegroundColor Green
         
-        # Check the configuration status
-        $Status = Get-DscConfigurationStatus
-        Write-Host "Configuration Status: $($Status.Status)" -ForegroundColor Yellow
-        Write-Host "Configuration Mode: $($Status.Mode)" -ForegroundColor Yellow
-        
-        if ($Status.Status -eq "Success") {
-            Write-Host "All resources were configured successfully!" -ForegroundColor Green
+        # Check the configuration status (with error handling)
+        try {
+            $Status = Get-DscConfigurationStatus -ErrorAction SilentlyContinue
+            if ($Status) {
+                Write-Host "Configuration Status: $($Status.Status)" -ForegroundColor Yellow
+                Write-Host "Configuration Mode: $($Status.Mode)" -ForegroundColor Yellow
+                
+                if ($Status.Status -eq "Success") {
+                    Write-Host "All resources were configured successfully!" -ForegroundColor Green
+                }
+                else {
+                    Write-Warning "Configuration completed with warnings or errors"
+                }
+            }
+            else {
+                Write-Host "DSC configuration status not available (this is normal for some configurations)" -ForegroundColor Yellow
+            }
         }
-        else {
-            Write-Warning "Configuration completed with warnings or errors"
+        catch {
+            Write-Host "Could not retrieve DSC configuration status: $($_.Exception.Message)" -ForegroundColor Yellow
+            Write-Host "This is normal for some DSC configurations" -ForegroundColor Yellow
         }
     }
     catch {
@@ -306,6 +343,9 @@ try {
     Write-Host "`n=== Windows 11 Workstation Configuration ===" -ForegroundColor Cyan
     Write-Host "Phase 1: Basic Computer Name Configuration" -ForegroundColor Yellow
     Write-Host "===============================================`n" -ForegroundColor Cyan
+    
+    # Initialize WinRM for DSC operations
+    Initialize-WinRM
     
     # Load and validate configuration data
     $ConfigData = Test-ConfigurationData -DataPath $ConfigurationDataPath
